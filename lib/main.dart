@@ -17,9 +17,14 @@ class MyApp extends StatelessWidget {
         ),
         body: TodoList(),
         floatingActionButton: FloatingActionButton(
+          hoverColor: Color.fromARGB(223, 6, 18, 109),
+          onPressed: () {
+            Navigator.push(
+                context, PageRouteBuilder(pageBuilder: (_, __, ___) => Task()));
+          },
+          tooltip: "add task",
           child: const Icon(Icons.add),
-          onPressed: (){}
-          ),
+        ),
       ),
     );
   }
@@ -33,47 +38,123 @@ class TodoList extends StatefulWidget {
 }
 
 class _TodoListState extends State<TodoList> {
-  
-  final _todoItems = [
+  final List<Map<String, String>> _todoItems = [
     {
       "title": "Faire du velo",
-      "author": "Moussa",
-      "date": DateTime.now(),
-      "photo":"moussa.jpeg"
+      "author": "moussa",
+      "date": DateTime.now().toString(),
+      "photo": "moussa.jpeg"
+    },
+    {
+      "title": "Avancer dans la vie",
+      "author": "malick",
+      "date": DateTime.now().toString(),
+      "photo": "khadim.png"
     },
     {
       "title": "Faire le ménage",
-      "author": "Lamine",
-      "date": DateTime.now(),
-      "photo":"lamine.jpeg"
+      "author": "lamine",
+      "date": DateTime.now().toString(),
+      "photo": "lamine.jpeg"
     },
     {
       "title": "Ranger ces affaires",
-      "author": "Khadim",
-      "date": DateTime.now(),
-      "photo":"khadim.png"
+      "author": "khadim",
+      "date": DateTime.now().toString(),
+      "photo": "khadim.png"
     },
+    {
+      "title": "Aller à l'école",
+      "author": "lamine",
+      "date": DateTime.now().toString(),
+      "photo": "lamine.jpeg"
+    },
+    {
+      "title": "Vivre dans sa vie",
+      "author": "lamine",
+      "date": DateTime.now().toString(),
+      "photo": "lamine.jpeg"
+    },
+        {
+      "title": "Ranger ces affaires",
+      "author": "khadim",
+      "date": DateTime.now().toString(),
+      "photo": "khadim.png"
+    },
+
+
   ];
+  List<Map<String, String>> _matching = [];
+
+  @override
+  void initState() {
+    _matching = _todoItems;
+    super.initState();
+  }
+
+  void _filter(String value) {
+    List<Map<String, String>> res = [];
+    if (value.isEmpty) {
+      res = _todoItems;
+    } else {
+      res = _todoItems.where((element) =>
+          element["author"]!.toLowerCase().startsWith(value.toLowerCase())).toList();
+    }
+    setState(() {
+      _matching = res;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          TextField(
+            decoration: InputDecoration(
+                labelText: "Search", suffixIcon: Icon(Icons.search)),
+            onChanged: (value) => _filter(value),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                final todoItem = _matching[index];
+                return Card(
+                    child: ListTile(
+                  leading: Image.asset(
+                    'assets/images/${todoItem['photo']}',
+                    width: 50,
+                  ),
+                  title: Text('${todoItem["title"]}  (${todoItem["author"]})'),
+                  subtitle: Text(todoItem["date"]!.toString()),
+                  trailing: Icon(Icons.more_vert),
+                ));
+              },
+              itemCount: _matching.length,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class Task extends StatefulWidget {
+  const Task({super.key});
+
+  @override
+  State<Task> createState() => _TaskState();
+}
+
+class _TaskState extends State<Task> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: ListView.builder(
-        itemBuilder: (context, index) {
-          final todoItem = _todoItems[index];
-          return Card(
-              child: ListTile(
-            leading: Image.asset(
-              'assets/images/${todoItem['photo']}',
-
-              width: 50,
-              ),
-            title: Text('${todoItem["title"]}  (${todoItem["author"]})'),
-            subtitle: Text(todoItem["date"]!.toString()),
-            trailing: Icon(Icons.more_vert),
-          )); 
-        },
-        itemCount: _todoItems.length,
-      ),
+      child: const Text("data"),
     );
   }
 }
